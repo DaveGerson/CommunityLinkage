@@ -1,14 +1,29 @@
 #trans = read.transactions("some_data.csv", format = "single", sep = ",", cols = c("transactionID", "productID"))
 library("arules")
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.00005, confidence=0.3 , maxlen = 2))
+rules <- apriori(Groceries, parameter=list(support=0.02, confidence=0.3 , maxlen = 2))
 rules
 rulesDF<-as(rules, "data.frame")
 
+
+#Visualizations arulesViz
+library("arulesViz")
+plot(rules[10], method = "mosaic" , interactive = TRUE , data = Groceries)
+plot(rules)
+plot(rules, method = "graph", interactive = TRUE)
+plot(rules, method = "grouped" , interactive = TRUE , data = Groceries)
+plot(rules, method = "two-key pdflot" , interactive = TRUE , data = Groceries)
+plot(rules, method = "matrix" , interactive = TRUE , data = Groceries , measure = "lift")
+
+#Link Comm analysis
+rules <- apriori(Groceries, parameter=list(support=0.0005, confidence=0.3 , maxlen = 2))
+rules
+rulesDF<-as(rules, "data.frame")
 rulesDF$lhs <- unlist(lapply(strsplit(gsub("\\}", "",gsub("\\{", "",(as.character(rulesDF$rules)))), "=>"), "[", 1))
 rulesDF$rhs <- unlist(lapply(strsplit(gsub("\\}", "",gsub("\\{", "",(as.character(rulesDF$rules)))), "=>"), "[", 2))
 rulesDF$lhs <- as.factor(rulesDF$lhs)
 rulesDF$rhs <- as.factor(rulesDF$rhs)
+
 
 #deprecated in testing at single item rules
 #strsplit(as.character(rulesDF$lhs),",")
